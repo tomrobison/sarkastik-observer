@@ -21,6 +21,7 @@ Run the bot using::
 
 import base64
 import os
+import uuid
 
 from dotenv import load_dotenv
 from loguru import logger
@@ -57,28 +58,34 @@ logger.info("✅ All components loaded successfully!")
 load_dotenv(override=True)
 
 
-def _setup_langfuse_tracing():
+def _setup_langfuse_tracing() -> bool:
     pk = os.getenv("LANGFUSE_PUBLIC_KEY")
     sk = os.getenv("LANGFUSE_SECRET_KEY")
     if not pk or not sk:
-        return
+        return False
     from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
     from pipecat.utils.tracing.setup import setup_tracing
 
+    base_url = os.getenv("LANGFUSE_BASE_URL", "http://localhost:3000").rstrip("/")
     token = base64.b64encode(f"{pk}:{sk}".encode()).decode()
     exporter = OTLPSpanExporter(
-        endpoint="http://localhost:3000/api/public/otel",
-        headers={"Authorization": f"Basic {token}"},
+        endpoint=f"{base_url}/api/public/otel/v1/traces",
+        headers={
+            "Authorization": f"Basic {token}",
+            "x-langfuse-ingestion-version": "4",
+        },
     )
     setup_tracing(service_name="pipecat-quickstart", exporter=exporter)
-    logger.info("Langfuse tracing enabled")
+    logger.info(f"Langfuse tracing enabled → {base_url}")
+    return True
 
 
-_setup_langfuse_tracing()
+_tracing_enabled = _setup_langfuse_tracing()
 
 
 async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
-    logger.info(f"Starting bot")
+    conversation_id = str(uuid.uuid4())
+    logger.info(f"Starting bot | conversation_id={conversation_id}")
 
     stt = DeepgramSTTService(api_key=os.getenv("DEEPGRAM_API_KEY"))
 
@@ -120,6 +127,8 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
             enable_metrics=True,
             enable_usage_metrics=True,
         ),
+        enable_tracing=_tracing_enabled,
+        conversation_id=conversation_id if _tracing_enabled else None,
     )
 
     @transport.event_handler("on_client_connected")
