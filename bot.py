@@ -19,6 +19,7 @@ Run the bot using::
     uv run bot.py
 """
 
+import base64
 import os
 
 from dotenv import load_dotenv
@@ -54,6 +55,26 @@ from pipecat.transports.daily.transport import DailyParams
 logger.info("✅ All components loaded successfully!")
 
 load_dotenv(override=True)
+
+
+def _setup_langfuse_tracing():
+    pk = os.getenv("LANGFUSE_PUBLIC_KEY")
+    sk = os.getenv("LANGFUSE_SECRET_KEY")
+    if not pk or not sk:
+        return
+    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+    from pipecat.utils.tracing.setup import setup_tracing
+
+    token = base64.b64encode(f"{pk}:{sk}".encode()).decode()
+    exporter = OTLPSpanExporter(
+        endpoint="http://localhost:3000/api/public/otel",
+        headers={"Authorization": f"Basic {token}"},
+    )
+    setup_tracing(service_name="pipecat-quickstart", exporter=exporter)
+    logger.info("Langfuse tracing enabled")
+
+
+_setup_langfuse_tracing()
 
 
 async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
