@@ -26,7 +26,7 @@ createRoot(document.getElementById("root")!).render(
             },
           }}
 
-          collapseMediaPanel={true}
+          collapseInfoPanel={true}
           noBotAudio={true}
           noBotVideo={true}
           noMetrics={true}
