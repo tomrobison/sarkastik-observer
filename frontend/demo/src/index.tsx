@@ -17,6 +17,8 @@ createRoot(document.getElementById("root")!).render(
     <ThemeProvider>
       <FullScreenContainer>
         <ConsoleTemplate
+          logoComponent={<img src="/labette-logo.svg" alt="Labette" width={150} height={150} />}
+          titleText="Coach Lasso Tom 1:1"
           startBotParams={{
             endpoint: "/start",
             requestData: {

@@ -18,7 +18,7 @@ createRoot(document.getElementById("root")!).render(
       <FullScreenContainer>
         <ConsoleTemplate
           startBotParams={{
-            endpoint: "/start",
+            endpoint: "https://exquisite-benevolence-production-9304.up.railway.app/start",
             requestData: {
               createDailyRoom: false,
               enableDefaultIceServers: true,

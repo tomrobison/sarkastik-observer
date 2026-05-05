@@ -19,4 +19,4 @@ RUN uv sync --locked --no-install-project --no-dev
 
 COPY ./bot.py .
 
-CMD ["uv", "run", "bot.py"]
+CMD uv run bot.py --host 0.0.0.0 --port ${PORT:-7860}
