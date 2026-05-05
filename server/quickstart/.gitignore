@@ -1,0 +1,2 @@
+# Include uv.lock for reproducible Railway deployments
+!uv.lock
