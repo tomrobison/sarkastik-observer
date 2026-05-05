@@ -22,9 +22,8 @@ createRoot(document.getElementById("root")!).render(
           startBotParams={{
             endpoint: "/start",
             requestData: {
-              createDailyRoom: false,
-              enableDefaultIceServers: true,
-              transport: "webrtc",
+              createDailyRoom: true,
+              transport: "daily",
             },
           }}
 
@@ -37,10 +36,7 @@ createRoot(document.getElementById("root")!).render(
           noSessionInfo={true}
           noStatusInfo={true}
           noThemeSwitch={true}
-          transportType="smallwebrtc"
-          transportOptions={{
-            waitForICEGathering: true,
-          }}
+          transportType="daily"
         />
       </FullScreenContainer>
     </ThemeProvider>

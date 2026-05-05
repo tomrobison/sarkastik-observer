@@ -20,15 +20,11 @@ createRoot(document.getElementById("root")!).render(
           startBotParams={{
             endpoint: "https://exquisite-benevolence-production-9304.up.railway.app/start",
             requestData: {
-              createDailyRoom: false,
-              enableDefaultIceServers: true,
-              transport: "webrtc",
+              createDailyRoom: true,
+              transport: "daily",
             },
           }}
-          transportType="smallwebrtc"
-          transportOptions={{
-            waitForICEGathering: true,
-          }}
+          transportType="daily"
         />
       </FullScreenContainer>
     </ThemeProvider>
